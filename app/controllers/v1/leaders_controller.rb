@@ -2,12 +2,14 @@ module V1
   class LeadersController < ApplicationController
     respond_to :json
 
-    before_filter do
+    before_action do
       @state = State.find_by_code(params[:state_id].upcase) if params[:state_id]
     end
 
     def index
+      #debugger
       @leaders = @state.leaders.current
+      #debugger
     end
 
     def show
