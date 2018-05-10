@@ -1,3 +1,14 @@
+# Getting Started as a New Developer
+
+1.  Check out the code base
+2.  Install postgres on OSX if its not already there.
+3.  Create the postgres user if it doesn't exist: /usr/local/Cellar/postgresql/9.6.3/bin/createuser -s postgres
+4.  Create the database: bundle exec rake db:create
+5.  Migrate the database to the table structure: bundle exec rake db:migrate
+6. Import the state data with: bundle exec rake know_who:import_states --trace
+7. Export a month directory like this: export KNOW_WHO_MONTH=~/fuzzygroup/consulting/new-leaders-api/spec/fixtures/leaders/2012-12 (adjust to your own directory structure -or- the month you want to load)
+8. Load the leader data with: bundle exec rake know_who:import_month --trace
+
 # new-leaders-api
 
 Serving up current congressional leaders for all 50 States on both the US and State level.
