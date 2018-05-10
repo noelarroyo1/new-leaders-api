@@ -1,28 +1,35 @@
 class Leader < ActiveRecord::Base
   belongs_to :state
 
-  attr_protected :person_id
+  #attr_protected :person_id
+  #attr_accessor :person_id
+  # jsj the above caused no end of issues; attr_protected is a syntax error and 
+  # attr_accessor (the replacement) caused Postgres issues; I finally took it out
+  # having no idea WHY it was ever implemented
 
-  scope :current,       where(member_status: 'current')
-  scope :state,         where(member_status: 'current',
-                              legislator_type: "SL").order(:last_name)
-  scope :state_house,   where(member_status: 'current',
-                              legislator_type: "SL", chamber: "H").order(:last_name)
-  scope :state_senate,  where(member_status: 'current',
-                              legislator_type: "SL", chamber: "S").order(:last_name)
-  scope :us,            where(member_status: 'current',
-                              legislator_type: "FL").order(:last_name)
-  scope :us_house,      where(member_status: 'current',
-                              legislator_type: "FL", chamber: "H").order(:last_name)
-  scope :us_senate,     where(member_status: 'current',
-                              legislator_type: "FL", chamber: "S").order(:last_name)
+  scope :current, ->      {where(member_status: 'current') }
+  scope :state, ->        {where(member_status: 'current',
+                            legislator_type: "SL").order(:last_name)}
+  scope :state_house, ->  {where(member_status: 'current',
+                              legislator_type: "SL", chamber: "H").order(:last_name)}
+  scope :state_senate, -> {where(member_status: 'current',
+                              legislator_type: "SL", chamber: "S").order(:last_name)}
+  scope :us, ->           {where(member_status: 'current',
+                              legislator_type: "FL").order(:last_name)}
+  scope :us_house, ->     {where(member_status: 'current',
+                              legislator_type: "FL", chamber: "H").order(:last_name)}
+  scope :us_senate, ->    {where(member_status: 'current',
+                              legislator_type: "FL", chamber: "S").order(:last_name)}
 
   before_save :generate_slug
 
   def self.create_or_update(data)
-    leader = Leader.find_or_create_by_person_id(data[:pid])
-    update_attributes_from_know_who(leader, data)
+    #leader = Leader.find_or_create_by_person_id(data[:pid])
+    #debugger
+    leader = Leader.find_or_create_by(person_id: data[:pid])
+    Leader.update_attributes_from_know_who(leader, data)
     ensure_correct_state(leader, data)
+    #debugger
     leader.tap { |l| l.save! }
   end
 
